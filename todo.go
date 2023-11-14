@@ -25,14 +25,32 @@ func (t *Todos) Add(task string) {
 	*t = append(*t, todo)
 }
 
-func (t *Todos) Complete(index int) error {
+func (t *Todos) Complete(index int) (err error) {
 	ls := *t
-	if index <= 0 || index > len(ls) {
-		return errors.New("INVALID INDEX")
+	if err := validateIndex(index, len(ls)); err != nil {
+		return err
 	}
 
 	ls[index-1].CreatedAt = time.Now()
 	ls[index-1].Done = true
 
+	return nil
+}
+
+func (t *Todos) Delete(index int) (err error) {
+	ls := *t
+	if err := validateIndex(index, len(ls)); err != nil {
+		return err
+	}
+
+	*t = append(ls[:index-1], ls[index:]...)
+
+	return nil
+}
+
+func validateIndex(index, length int) error {
+	if index <= 0 || index > length {
+		return errors.New("INVALID INDEX")
+	}
 	return nil
 }
