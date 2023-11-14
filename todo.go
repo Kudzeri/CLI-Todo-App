@@ -76,3 +76,7 @@ func (t Todos) Load(filename string) (err error) {
 
 	return nil
 }
+
+func (t Todos) Store(filename string) (err error) {
+
+}
