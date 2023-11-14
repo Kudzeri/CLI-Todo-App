@@ -1,7 +1,9 @@
 package CLI_Todo_App
 
 import (
+	"encoding/json"
 	"errors"
+	"os"
 	"time"
 )
 
@@ -50,7 +52,27 @@ func (t *Todos) Delete(index int) (err error) {
 
 func validateIndex(index, length int) error {
 	if index <= 0 || index > length {
-		return errors.New("INVALID INDEX")
+		return errors.New("INVALID INDEX!")
 	}
+	return nil
+}
+
+func (t Todos) Load(filename string) (err error) {
+	file, err := os.ReadFile(filename)
+	if err != nil {
+		if errors.Is(err, os.ErrNotExist) {
+			return errors.New("FILE NOT EXISTS!")
+		}
+		return err
+	}
+
+	if len(file) == 0 {
+		return err
+	}
+	err = json.Unmarshal(file, t)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
