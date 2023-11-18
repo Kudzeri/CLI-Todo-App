@@ -110,18 +110,40 @@ func (t *Todos) Print() {
 
 	for idx, item := range ls {
 		idx++
+		task := blue(item.Task)
+		done := red("no")
+		createdAt := gray(item.CreatedAt.Format(time.RFC822))
+		completedAt := gray(item.CompletedAt.Format(time.RFC822))
+
+		if item.Done {
+			task = green(fmt.Sprintf("\u2705 %s", item.Task))
+			done = green(fmt.Sprintf("yes"))
+		}
+
 		cells = append(cells, *&[]*simpletable.Cell{
 			{Text: fmt.Sprintf("%d", idx)},
-			{Text: item.Task},
-			{Text: fmt.Sprintf("%t", item.Done)},
-			{Text: item.CreatedAt.Format(time.RFC822)},
-			{Text: item.CompletedAt.Format(time.RFC822)},
+			{Text: task},
+			{Text: fmt.Sprintf("%s", done)},
+			{Text: fmt.Sprintf("%s", createdAt)},
+			{Text: fmt.Sprintf("%s", completedAt)},
 		})
 	}
 	table.Body = &simpletable.Body{Cells: cells}
 	table.Footer = &simpletable.Footer{Cells: []*simpletable.Cell{
-		{Align: simpletable.AlignCenter, Span: 5, Text: "Your todos are here"},
+		{Align: simpletable.AlignCenter, Span: 5, Text: red(fmt.Sprintf("You have %d pending todos!", ls.CountPending()))},
 	}}
 	table.SetStyle(simpletable.StyleUnicode)
 	table.Println()
+}
+
+func (t *Todos) CountPending() int {
+	ls := *t
+	total := 0
+	for _, item := range ls {
+		if !item.Done {
+			total++
+		}
+	}
+
+	return total
 }
