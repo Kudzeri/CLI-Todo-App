@@ -3,6 +3,7 @@ package todoApp
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"os"
 	"time"
 )
@@ -84,4 +85,12 @@ func (t *Todos) Store(filename string) (err error) {
 	}
 
 	return os.WriteFile(filename, data, 0644)
+}
+
+func (t *Todos) Print() {
+	sl := *t
+	for i, item := range sl {
+		i++
+		fmt.Printf("%d - %s\n", i, item.Task)
+	}
 }
