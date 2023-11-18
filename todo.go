@@ -50,7 +50,7 @@ func (t *Todos) Delete(index int) (err error) {
 	return nil
 }
 
-func validateIndex(index, length int) error {
+func validateIndex(index, length int) (err error) {
 	if index <= 0 || index > length {
 		return errors.New("INVALID INDEX!")
 	}
@@ -67,7 +67,7 @@ func (t Todos) Load(filename string) (err error) {
 	}
 
 	if len(file) == 0 {
-		return err
+		return errors.New("FILE IS EMPTY!")
 	}
 	err = json.Unmarshal(file, t)
 	if err != nil {
@@ -78,5 +78,10 @@ func (t Todos) Load(filename string) (err error) {
 }
 
 func (t Todos) Store(filename string) (err error) {
+	data, err := json.Marshal(t)
+	if err != nil {
+		return err
+	}
 
+	return os.WriteFile(filename, data, 0644)
 }
