@@ -1,4 +1,4 @@
-package CLI_Todo_App
+package TodoApp
 
 import (
 	"encoding/json"
