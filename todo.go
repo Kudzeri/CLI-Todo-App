@@ -1,4 +1,4 @@
-package TodoApp
+package todoApp
 
 import (
 	"encoding/json"
