@@ -1,10 +1,14 @@
 package main
 
 import (
+	"bufio"
+	"errors"
 	"flag"
 	"fmt"
 	todo "github.com/kudzeri/todo-app"
+	"io"
 	"os"
+	"strings"
 )
 
 const (
@@ -28,8 +32,10 @@ func main() {
 
 	switch {
 	case *add:
-		todos.Add("Sample todo")
-		err := todos.Store(todoFile)
+		task, err := getInput(os.Stdin, flag.Args()...)
+		errPrint(err)
+		todos.Add(task)
+		err = todos.Store(todoFile)
 		errPrint(err)
 	case *complete > 0:
 		err := todos.Complete(*complete)
@@ -54,4 +60,23 @@ func errPrint(err error) {
 		fmt.Println(os.Stderr, err.Error())
 		os.Exit(1)
 	}
+}
+
+func getInput(r io.Reader, args ...string) (text string, err error) {
+	if len(args) > 0 {
+		return strings.Join(args, " "), nil
+	}
+
+	scanner := bufio.NewScanner(r)
+	scanner.Scan()
+	if err := scanner.Err(); err != nil {
+		return " ", err
+	}
+
+	text = scanner.Text()
+	if len(text) == 0 {
+		return " ", errors.New("EMPTY TODO IS NOT ALLOWED")
+	}
+
+	return text, nil
 }
